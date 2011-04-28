@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMessageHandler.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Messenger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
