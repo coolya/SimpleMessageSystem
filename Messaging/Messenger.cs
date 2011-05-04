@@ -25,7 +25,8 @@ namespace SMS
 
     public static class Messenger
     {
-        private static IDictionary<Type, ICollection<object>> _subscribers = new Dictionary<Type, ICollection<object>>();
+        private static IDictionary<Type, ICollection<object>> _subscribers =
+            new Dictionary<Type, ICollection<object>>();
 
         public static Message<TMessage> GetMessage<TMessage>()
         {
@@ -95,7 +96,8 @@ namespace SMS
             private static class MessagePool
             {
 
-                private static IDictionary<Type, ICollection<object>> _messagePool = new Dictionary<Type, ICollection<object>>();
+                private static IDictionary<Type, ICollection<object>> _messagePool =
+                    new Dictionary<Type, ICollection<object>>();
 
                 public static Message<TMessage> GetMessage<TMessage>()
                 {
@@ -104,7 +106,8 @@ namespace SMS
 
                     if (_messagePool.ContainsKey(typeof(TMessage)))
                     {
-                        ret = (Message<TMessage>)_messagePool[typeof(TMessage)].First((item) => ((Message<TMessage>)item)._inUse == false);
+                        ret = (Message<TMessage>)_messagePool[typeof(TMessage)].First((item) => 
+                            ((Message<TMessage>)item)._inUse == false);
                         ret._inUse = true;
                     }
 
