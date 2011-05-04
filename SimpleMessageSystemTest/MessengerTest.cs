@@ -30,7 +30,7 @@ namespace SimpleMessageSystemTest
         public void SimpleSubscribeTest()
         {
             Messenger.Subscribe<string>(TestStringHandler);
-            Messenger.GetMessage<string>().AddContent("Test Message").Publish();
+            Messenger.GetMessage<string>().AddContent("Test Message").Publish().Recycle();
             Messenger.Unsubscribe<string>(TestStringHandler);
         }
 
@@ -39,7 +39,30 @@ namespace SimpleMessageSystemTest
         {
             Messenger.Subscribe<string>(TestFailHandler);
             Messenger.Unsubscribe<string>(TestFailHandler);
-            Messenger.GetMessage<string>().AddContent("Test Message").Publish();            
+            Messenger.GetMessage<string>().AddContent("Test Message").Publish().Recycle();            
+        }
+
+        [TestMethod]
+        public void SimpleRecycleTest()
+        {
+            Messenger.Subscribe<string>(TestLogworkingHandler);
+            Messenger.GetMessage<string>().Recycle();
+            try
+            {
+                Messenger.GetMessage<string>().AddContent("Test Message").Publish().Recycle();
+                Assert.Fail();
+            }
+            catch (Exception)
+            {
+                
+            }
+            Messenger.Unsubscribe<string>(TestLogworkingHandler);
+            
+        }
+
+        private void TestLogworkingHandler(Message<string> msg)
+        {
+            System.Threading.Thread.Sleep(60000);
         }
 
         private void TestFailHandler(Message<string> msg)
