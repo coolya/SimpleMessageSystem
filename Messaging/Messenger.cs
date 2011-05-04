@@ -66,6 +66,11 @@ namespace SMS
             }
             _subscribers[typeof(TMesseage)].Add(handler);
         }
+        
+        public static void Subscribe<TMesseage>(IMessageHandler<TMesseage> handler)
+        {
+            Subscribe<TMesseage>(handler.MessageArrived);
+        }
 
         public static void Unsubscribe<TMesseage>(Action<Message<TMesseage>> handler)
         {
@@ -73,11 +78,6 @@ namespace SMS
             {
                 _subscribers[typeof(TMesseage)].Remove(handler);
             }            
-        }
-        
-        public static void Subscribe<TMesseage>(IMessageHandler<TMesseage> handler)
-        {
-            Subscribe<TMesseage>(handler.MessageArrived);
         }
 
         public static void Unsubscribe<TMesseage>(IMessageHandler<TMesseage> handler)
@@ -119,9 +119,11 @@ namespace SMS
 
                     if (_messagePool.ContainsKey(typeof(TMessage)))
                     {
-                        ret = (Message<TMessage>)_messagePool[typeof(TMessage)].First((item) => 
+                        ret = (Message<TMessage>)_messagePool[typeof(TMessage)].FirstOrDefault((item) => 
                             ((Message<TMessage>)item)._inUse == false);
-                        ret._inUse = true;
+
+                        if(ret != null)
+                            ret._inUse = true;
                     }
 
                     return ret;
