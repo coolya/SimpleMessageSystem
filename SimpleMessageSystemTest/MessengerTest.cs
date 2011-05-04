@@ -27,12 +27,25 @@ namespace SimpleMessageSystemTest
     public class MessengerTest
     {
         [TestMethod]
-        public void SimpleMessage()
+        public void SimpleSubscribeTest()
         {
             Messenger.Subscribe<string>(TestStringHandler);
             Messenger.GetMessage<string>().AddContent("Test Message").Publish();
+            Messenger.Unsubscribe<string>(TestStringHandler);
         }
 
+        [TestMethod]
+        public void SimpleUnsubscribeTest()
+        {
+            Messenger.Subscribe<string>(TestFailHandler);
+            Messenger.Unsubscribe<string>(TestFailHandler);
+            Messenger.GetMessage<string>().AddContent("Test Message").Publish();            
+        }
+
+        private void TestFailHandler(Message<string> msg)
+        {
+            Assert.Fail();
+        }
 
         private void TestStringHandler(Message<string> msg)
         {
