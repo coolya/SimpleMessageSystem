@@ -28,6 +28,12 @@ namespace SMS
         private static IDictionary<Type, ICollection<object>> _subscribers =
             new Dictionary<Type, ICollection<object>>();
 
+        /// <summary>
+        /// Obains a new Message for <code>TMessage</code> this can be a new Message a unused 
+        /// Message from the internal pool
+        /// </summary>
+        /// <typeparam name="TMessage">Type of data the message should wrap</typeparam>
+        /// <returns>a (new) Message that can be used</returns>
         public static Message<TMessage> GetMessage<TMessage>()
         {
             Message<TMessage> message = MessagePool.GetMessage<TMessage>();
@@ -112,20 +118,23 @@ namespace SMS
                 private static IDictionary<Type, ICollection<object>> _messagePool =
                     new Dictionary<Type, ICollection<object>>();
 
+                private static object _lock = new object();
+
                 public static Message<TMessage> GetMessage<TMessage>()
                 {
-                    //@todo lock for thread safty
                     Message<TMessage> ret = null;
 
-                    if (_messagePool.ContainsKey(typeof(TMessage)))
+                    lock (_lock)
                     {
-                        ret = (Message<TMessage>)_messagePool[typeof(TMessage)].FirstOrDefault((item) => 
-                            ((Message<TMessage>)item)._inUse == false);
+                        if (_messagePool.ContainsKey(typeof(TMessage)))
+                        {
+                            ret = (Message<TMessage>)_messagePool[typeof(TMessage)].FirstOrDefault((item) =>
+                                ((Message<TMessage>)item)._inUse == false);
 
-                        if(ret != null)
-                            ret._inUse = true;
+                            if (ret != null)
+                                ret._inUse = true;
+                        }
                     }
-
                     return ret;
                 }
 
