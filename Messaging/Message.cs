@@ -63,6 +63,18 @@ namespace SMS
 
         public void Recycle()
         {
+            int retries = 1000;
+
+            while (_handles > 0 && retries > 0)
+            {
+                retries--;
+                System.Threading.Thread.Sleep(10);
+            }
+
+            if (retries == 0 && _handles > 0)
+                throw new InvalidOperationException(
+                    "You tried to resycle a Message that is currently in use by at leat one Handler.");
+
             _inUse = false;
         }
     }
