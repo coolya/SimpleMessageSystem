@@ -56,9 +56,10 @@ namespace SMS
             return this;
         }
 
-        public void Publish()
+        public Message<T> Publish()
         {
             Messenger.SendMessage<T>(this);
+            return this;
         }
 
         public void Recycle()
