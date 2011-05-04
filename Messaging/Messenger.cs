@@ -66,10 +66,23 @@ namespace SMS
             }
             _subscribers[typeof(TMesseage)].Add(handler);
         }
+
+        public static void Unsubscribe<TMesseage>(Action<Message<TMesseage>> handler)
+        {
+            if (_subscribers.ContainsKey(typeof(TMesseage)))
+            {
+                _subscribers[typeof(TMesseage)].Remove(handler);
+            }            
+        }
         
         public static void Subscribe<TMesseage>(IMessageHandler<TMesseage> handler)
         {
             Subscribe<TMesseage>(handler.MessageArrived);
+        }
+
+        public static void Unsubscribe<TMesseage>(IMessageHandler<TMesseage> handler)
+        {
+            Unsubscribe<TMesseage>(handler.MessageArrived);
         }
 
         public static void SendMessage<TMessage>(Message<TMessage> msg)
