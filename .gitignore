@@ -4,3 +4,4 @@
 *.vs10x
 *.suo
 TestResults/*.trx
+TestResults/*
