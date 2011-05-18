@@ -30,7 +30,7 @@ namespace SimpleMessageSystemTest
         public void SimpleSubscribeTest()
         {
             Messenger.Subscribe<string>(TestStringHandler);
-            Messenger.GetMessage<string>().AddContent("Test Message").Publish().Recycle();
+            Messenger.GetMessage<string>().SetCallback((msg) => msg.Recycle()).AddContent("Test Message").Publish();
             Messenger.Unsubscribe<string>(TestStringHandler);
         }
 

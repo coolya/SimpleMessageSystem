@@ -97,17 +97,29 @@ namespace SMS
 
             if (_subscribers.ContainsKey(targetMessagetype))
             {
+                List<Task> tasks = new List<Task>();
                 foreach (var item in _subscribers[targetMessagetype])
                 {
                     //increment handles to be sure no one is working with the message when we recycle it
                     msg.Increment();
                     //notify subscribers in a new thread for concurrency
-                    Task.Factory.StartNew(() =>
+                    tasks.Add(Task.Factory.StartNew(() =>
                     {
                         ((Action<Message<TMessage>>)item)(msg);
                         //decrement handle to prepare for recycle when all handlers have finished
                         msg.Decrement();
-                    });
+                    }));
+                }
+
+                if (msg.PublishComplete != null)
+                {
+                    //call back all the message when subscribers are finished
+                    Task.Factory.StartNew(() =>
+                        {
+                            Task.WaitAll(tasks.ToArray());
+                            msg.PublishComplete(msg);
+                        }
+                    );
                 }
             }
         }
